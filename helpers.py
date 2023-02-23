@@ -10,23 +10,40 @@ def limpiar_pantalla():
     else:
         os.system("clear")
 
-
-def validar_texto(texto):
-    patron = r"^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s]+$"
-    if re.match(patron, texto):
+def validar_id(id, lista):
+    if re.match(int("^[0-9]+$"), id):
+        for cliente in lista:
+            if cliente.id == id:
+                print("El ID ya existe")
+                return False
         return True
     else:
-        print("El texto no es válido")
+        print("El ID no es válido")
         return False
+
+
+def validar_texto(longitud_min = 3, longitud_max = 50):
+    while True:
+        texto = input("Introduce un texto: ")
+        if re.match("^[a-zA-ZñÑáéíóúÁÉÍÓÚ ]+$", texto):
+            if longitud_min <= len(texto) <= longitud_max:
+                return texto
+            else:
+                print("El texto debe tener entre {} y {} caracteres".format(longitud_min, longitud_max))
+        else:
+            print("El texto no es válido")
+
     
-def validar_dni(dni):
+def validar_dni(dni, lista):
     if re.match("^[0-9]{8}[A-Z]$", dni):
         return True
     else:
-        for cliente in db.Clientes.lista:
+        for cliente in lista:
             if cliente.dni == dni:
                 print("El DNI ya existe")
                 return False
+        print("El DNI no es válido")
+        return False
     
 
     

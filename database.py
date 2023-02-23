@@ -20,12 +20,8 @@ class Clientes:
     lista = []
     with open(config.DATABASE_PATH, newline = "\n") as fichero:
         lector = csv.DictReader(fichero, delimiter = ";")
-        for cliente in lector:
-            lista.append(Cliente(cliente["id"], cliente["nombre"], cliente["apellido"], cliente["dni"]))
-
-    @staticmethod
-    def generar_id():
-        return len(Clientes.lista) + 1
+        for id, nombre, apellido, dni in lector:
+            lista.append(Cliente(int(id), nombre, apellido, dni))
 
     @staticmethod
     def buscar(id):
@@ -35,7 +31,6 @@ class Clientes:
 
     @staticmethod
     def crear(id, nombre, apellido, dni):
-        id = Clientes.generar_id()
         cliente = Cliente(id, nombre, apellido, dni)
         Clientes.lista.append(cliente)
         Clientes.guardar()
@@ -55,9 +50,9 @@ class Clientes:
     def borrar(id):
         for indice, cliente in enumerate(Clientes.lista):
             if cliente.id == id:
-                del Clientes.lista[indice]
+                cliente = Clientes.lista.pop(indice)
                 Clientes.guardar()
-                break
+                return cliente
 
     @staticmethod
     def guardar():

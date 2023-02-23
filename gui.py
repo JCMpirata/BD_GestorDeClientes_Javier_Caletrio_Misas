@@ -11,10 +11,11 @@ class Casillas_Rellenar:
         self.id = Label(self, text = "Id: ")
         self.id.config(font=("Arial", 12, "bold"))
         self.id.grid(row = 0, column = 0, padx = 10, pady = 10)
-        self.mi_id = db.Clientes.generar_id()
+        self.mi_id = IntVar()
         self.caja_id = Entry(self, textvariable = self.mi_id)
         self.caja_id.config(font=("Arial", 12))
         self.caja_id.grid(row = 0, column = 1, padx = 10, pady = 10)
+        self.caja_id.bind("<KeyRelease>", lambda event: self.validate(event, 0))
         
         self.nombre = Label(self, text = "Nombre: ")
         self.nombre.config(font=("Arial", 12, "bold"))
@@ -23,7 +24,7 @@ class Casillas_Rellenar:
         self.caja_nombre = Entry(self, textvariable = self.mi_nombre)
         self.caja_nombre.config(font=("Arial", 12))
         self.caja_nombre.grid(row = 1, column = 1, padx = 10, pady = 10)
-        self.caja_nombre.bind("<KeyRelease>", lambda event: self.validate(event, 0))
+        self.caja_nombre.bind("<KeyRelease>", lambda event: self.validate(event, 1))
 
         self.apellido = Label(self, text = "Apellido: ")
         self.apellido.config(font=("Arial", 12, "bold"))
@@ -32,7 +33,7 @@ class Casillas_Rellenar:
         self.caja_apellido = Entry(self, textvariable = self.mi_apellido)
         self.caja_apellido.config(font=("Arial", 12))
         self.caja_apellido.grid(row = 2, column = 1, padx = 10, pady = 10)
-        self.caja_apellido.bind("<KeyRelease>", lambda event: self.validate(event, 1))
+        self.caja_apellido.bind("<KeyRelease>", lambda event: self.validate(event, 2))
 
         self.dni = Label(self, text = "DNI: ")
         self.dni.config(font=("Arial", 12, "bold"))
@@ -41,23 +42,21 @@ class Casillas_Rellenar:
         self.caja_dni = Entry(self, textvariable = self.mi_dni)
         self.caja_dni.config(font=("Arial", 12))
         self.caja_dni.grid(row = 3, column = 1, padx = 10, pady = 10)
-        self.caja_dni.bind("<KeyRelease>", lambda event: self.validate(event, 2))
+        self.caja_dni.bind("<KeyRelease>", lambda event: self.validate(event, 3))
         
-    def boton_guardar(self):
-        boton_guardar = Button(self, text = "Guardar", command = self.guardar)
-        boton_guardar.config(width = 20, font=("Arial", 12, "bold"),
+        self.boton_guardar = Button(self, text = "Guardar", command = self.guardar)
+        self.boton_guardar.config(width = 20, font=("Arial", 12, "bold"),
                                 bg = "green", fg = "white", cursor = "hand2",
                                 activebackground= "#35BD6F")
-        boton_guardar.configure(state = NORMAL)
-        boton_guardar.grid(row = 4, column = 0, padx = 10, pady = 10)
+        self.boton_guardar.configure(state = NORMAL)
+        self.boton_guardar.grid(row = 4, column = 0, padx = 10, pady = 10)
     
-    def boton_cancelar(self):
-        boton_cancelar = Button(self, text = "Cancelar", command = self.destroy)
-        boton_cancelar.config(width = 20, font=("Arial", 12, "bold"),
+        self.boton_cancelar = Button(self, text = "Cancelar", command = self.destroy)
+        self.boton_cancelar.config(width = 20, font=("Arial", 12, "bold"),
                                 bg = "red", fg = "white", cursor = "hand2",
                                 activebackground= "#35BD6F")
-        boton_cancelar.configure(state = NORMAL)
-        boton_cancelar.grid(row = 4, column = 1, padx = 10, pady = 10)
+        self.boton_cancelar.configure(state = NORMAL)
+        self.boton_cancelar.grid(row = 4, column = 1, padx = 10, pady = 10)
 
         
 
@@ -133,8 +132,7 @@ class Ventana_crear_cliente(Toplevel, Casillas_Rellenar):
         self.resizable(1, 1)
         self.config(bg="light green")
         self.build()
-        self.boton_guardar()
-        self.boton_cancelar()
+
 
     def guardar(self):
         self.master.treeview.insert("", 0, text="Cliente", values=(self.caja_id.get(), self.caja_nombre.get(), self.caja_apellido.get(), self.caja_dni.get()))
@@ -143,18 +141,19 @@ class Ventana_crear_cliente(Toplevel, Casillas_Rellenar):
                           
     def validate(self, event, index):
         valor = event.widget.get()
+        valido_id = hlp.validar_id(valor, db.Clientes.lista) if index == 0 else None
         valido = hlp.validar_dni(valor, db.Clientes.lista) if index == 3 \
             else (valor.isalpha() and len(valor) >= 2 and len(valor) <= 30)
         event.widget.configure({"bg": "Green" if valido else "Red"})
         # Cambiar el estado del botón en base a las validaciones
-        self.boton_guardar.configure(state = NORMAL if valido else DISABLED)
+        self.boton_guardar.config(state = NORMAL if valido and valido_id else DISABLED)
         
 
 
         
 
 class Ventana_editar_cliente(Toplevel, Casillas_Rellenar):
-    def __init__(self, parent, cliente):
+    def __init__(self, parent):
         super().__init__(parent)
         self.title("Gestor de clientes (Editar cliente)")
         self.geometry("500x300")

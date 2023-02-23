@@ -15,7 +15,7 @@ def iniciar():
     opcion = input("Elija una opción: ")
 
     if opcion == "1":
-        id = db.Clientes.generar_id()
+        id = hlp.validar_id("Ingrese el ID del cliente: ")
         nombre = hlp.validar_texto("Ingrese el nombre del cliente: ").capitalize()
         apellido = hlp.validar_texto("Ingrese el apellido del cliente: ").capitalize()
         dni = None
