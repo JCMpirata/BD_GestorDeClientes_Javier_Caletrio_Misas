@@ -34,7 +34,7 @@ class Clientes:
                 return cliente
 
     @staticmethod
-    def crear(nombre, apellido, dni):
+    def crear(id, nombre, apellido, dni):
         id = Clientes.generar_id()
         cliente = Cliente(id, nombre, apellido, dni)
         Clientes.lista.append(cliente)
@@ -61,8 +61,7 @@ class Clientes:
 
     @staticmethod
     def guardar():
-        with open(config.DATABASE_PATH, "w", newline = "\n") as fichero:
-            escritor = csv.DictWriter(fichero, delimiter = ";", fieldnames = ["id", "nombre", "apellido", "dni"])
-            escritor.writeheader()
+        with open(config.DATABASE_PATH, 'w', newline='\n') as fichero:
+            writer = csv.writer(fichero, delimiter=';')
             for cliente in Clientes.lista:
-                escritor.writerow(cliente.id, cliente.nombre, cliente.apellido, cliente.dni)
+                writer.writerow((cliente.id, cliente.dni, cliente.nombre, cliente.apellido))
