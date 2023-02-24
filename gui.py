@@ -15,7 +15,6 @@ class Casillas_Rellenar:
         self.caja_id = Entry(self, textvariable = self.mi_id)
         self.caja_id.config(font=("Arial", 12))
         self.caja_id.grid(row = 0, column = 1, padx = 10, pady = 10)
-        self.caja_id.bind("<KeyRelease>", lambda event: self.validate(event, 0))
         
         self.nombre = Label(self, text = "Nombre: ")
         self.nombre.config(font=("Arial", 12, "bold"))
@@ -133,6 +132,8 @@ class Ventana_crear_cliente(Toplevel, Casillas_Rellenar):
         self.config(bg="light green")
         self.build()
 
+        self.caja_id.bind("<KeyRelease>", lambda event: self.validate(event, 0))
+
 
     def guardar(self):
         self.master.treeview.insert("", 0, text="Cliente", values=(self.caja_id.get(), self.caja_nombre.get(), self.caja_apellido.get(), self.caja_dni.get()))
@@ -141,7 +142,7 @@ class Ventana_crear_cliente(Toplevel, Casillas_Rellenar):
                           
     def validate(self, event, index):
         valor = event.widget.get()
-        valido_id = hlp.validar_id(valor, db.Clientes.lista) if index == 0 else None
+        valido_id = hlp.validar_id(valor, db.Clientes.lista)
         valido = hlp.validar_dni(valor, db.Clientes.lista) if index == 3 \
             else (valor.isalpha() and len(valor) >= 2 and len(valor) <= 30)
         event.widget.configure({"bg": "Green" if valido else "Red"})

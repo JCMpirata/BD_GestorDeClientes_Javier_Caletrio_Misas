@@ -10,8 +10,8 @@ def limpiar_pantalla():
     else:
         os.system("clear")
 
-def validar_id(id, lista):
-    if re.match(int("^[0-9]+$"), id):
+def validar_id(id: int, lista):
+    if id:
         for cliente in lista:
             if cliente.id == id:
                 print("El ID ya existe")
